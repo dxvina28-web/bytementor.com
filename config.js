@@ -10,3 +10,4 @@ function setGroqApiKey(key) {
   localStorage.setItem('groq_api_key', key);
   location.reload();
 }
+setGroqApiKey("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");
