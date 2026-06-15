@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ByteMentor – AI Coding Tutor</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0B0F1A; --bg-card: #111827; --border: #1F2937;
+      --text: #E5E7EB; --muted: #9CA3AF;
+      --primary: #3B82F6; --secondary: #22D3EE;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 64px;
+      background: rgba(11,15,26,0.85); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { display: flex; align-items: center; gap: 4px; font-size: 1.15rem; font-weight: 700; font-family: monospace; }
+    .brace { color: var(--primary); }
+    .wordmark { font-family: sans-serif; margin-left: 6px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 22px; border-radius: 999px; font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; border: none; transition: all 0.2s; text-decoration: none;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-outline:hover { background: rgba(255,255,255,0.05); }
+    .btn-lg { padding: 16px 36px; font-size: 1rem; border-radius: 999px; }
+
+    .hero { padding: 160px 2rem 80px; text-align: center; max-width: 900px; margin: 0 auto; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 16px; border-radius: 999px;
+      border: 1px solid rgba(34,211,238,0.3); background: rgba(34,211,238,0.07);
+      color: var(--secondary); font-size: 0.8rem; font-weight: 600; margin-bottom: 28px;
+    }
+    .hero h1 { font-size: clamp(2.6rem, 7vw, 4.5rem); font-weight: 900; line-height: 1.1; margin-bottom: 24px; }
+    .gradient { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero p { font-size: 1.15rem; color: var(--muted); max-width: 600px; margin: 0 auto 40px; line-height: 1.7; }
+    .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn-glow { box-shadow: 0 0 30px -5px rgba(59,130,246,0.45); }
+    .btn-glow:hover { box-shadow: 0 0 50px -5px rgba(59,130,246,0.65); opacity: 0.9; }
+
+    .section { padding: 80px 2rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-header { text-align: center; margin-bottom: 56px; }
+    .section-header h2 { font-size: 2rem; font-weight: 800; margin-bottom: 12px; }
+    .section-header p { color: var(--muted); }
+
+    .features-section { background: rgba(17,24,39,0.5); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+    .feature-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; transition: border-color 0.2s; }
+    .feature-card:hover { border-color: var(--primary); }
+    .feature-icon { width: 48px; height: 48px; border-radius: 10px; background: rgba(59,130,246,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 16px; }
+    .feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; max-width: 800px; margin: 0 auto; }
+    .step { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .step-num { width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 800; color: var(--primary); margin-bottom: 20px; box-shadow: 0 0 24px -6px rgba(59,130,246,0.5); }
+    .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .step p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 1060px; margin: 0 auto; align-items: center; }
+    .pricing-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; padding: 36px; display: flex; flex-direction: column; position: relative; }
+    .pricing-card.popular { border: 2px solid var(--primary); transform: translateY(-14px); box-shadow: 0 0 60px -20px rgba(59,130,246,0.35); }
+    .popular-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #fff; padding: 4px 18px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; white-space: nowrap; }
+    .pricing-card h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 8px; }
+    .pricing-card h3.pro { color: var(--primary); }
+    .price { font-size: 2rem; font-weight: 900; margin-bottom: 28px; }
+    .price span { font-size: 0.9rem; font-weight: 400; color: var(--muted); }
+    .features-list { list-style: none; margin-bottom: 28px; flex: 1; }
+    .features-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.875rem; color: rgba(229,231,235,0.85); margin-bottom: 14px; line-height: 1.4; }
+    .check { flex-shrink: 0; font-size: 1rem; margin-top: 1px; }
+    .check-blue { color: var(--primary); }
+    .check-cyan { color: var(--secondary); }
+    .pricing-btn { display: block; width: 100%; padding: 14px; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.2s; border: 1px solid var(--border); background: transparent; color: var(--text); text-decoration: none; }
+    .pricing-btn:hover { background: rgba(255,255,255,0.05); }
+    .pricing-btn.solid { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .pricing-btn.solid:hover { opacity: 0.85; }
+
+    .cta-bottom { text-align: center; margin-top: 64px; }
+    .btn-cta { display: inline-flex; align-items: center; gap: 12px; padding: 20px 48px; font-size: 1.1rem; font-weight: 700; border-radius: 999px; background: var(--primary); color: #fff; border: none; cursor: pointer; box-shadow: 0 0 40px -10px rgba(59,130,246,0.55); text-decoration: none; transition: all 0.2s; }
+    .btn-cta:hover { opacity: 0.88; box-shadow: 0 0 60px -10px rgba(59,130,246,0.7); }
+
+    footer { border-top: 1px solid var(--border); padding: 48px 2rem; margin-top: 20px; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px; }
+    .footer-tagline { font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
+    .footer-links { display: flex; gap: 28px; }
+    .footer-links a { font-size: 0.875rem; color: var(--muted); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--primary); }
+
+    @media (max-width: 700px) {
+      .pricing-card.popular { transform: none; }
+      .hero { padding: 120px 1.25rem 60px; }
+      .section { padding: 60px 1.25rem; }
+      nav { padding: 0 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">
+      <span class="brace">{</span><span>🧠</span><span class="brace">}</span>
+      <span class="wordmark">ByteMentor</span>
+    </div>
+    <a href="chat.html" class="btn btn-primary">Chat to ByteMentor</a>
+  </nav>
+
+  <div class="hero">
+    <div class="badge">✨ AI-Powered Coding Tutor</div>
+    <h1>Master Code With<br><span class="gradient">Infinite Patience.</span></h1>
+    <p>ByteMentor is your personal AI coding tutor. Get unstuck, understand complex concepts, and build projects faster with an intelligent companion that never sleeps.</p>
+    <div class="hero-btns">
+      <a href="chat.html" class="btn btn-primary btn-lg btn-glow">Start Learning Free</a>
+      <a href="#pricing" class="btn btn-outline btn-lg">View Plans</a>
+    </div>
+  </div>
+
+  <div class="section features-section">
+    <div class="section-inner">
+      <div class="section-header">
+        <h2>Four Specialized Modes</h2>
+        <p>Tailored intelligence for every step of your journey.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon">📖</div><h3>Beginner</h3><p>Step-by-step explanations with analogies. Zero assumptions about prior knowledge.</p></div>
+        <div class="feature-card"><div class="feature-icon">💻</div><h3>Intermediate</h3><p>Best practices, architecture patterns, and idiomatic code reviews.</p></div>
+        <div class="feature-card"><div class="feature-icon">✅</div><h3>Exam Prep</h3><p>Flashcard style questions, syllabus-aligned concepts, and mock assessments.</p></div>
+        <div class="feature-card"><div class="feature-icon">⚡</div><h3>Debug</h3><p>Laser-focused error resolution. Paste your stack trace and get the fix.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-inner">
+      <div class="section-header"><h2>How it works</h2><p>From confusion to clarity in minutes.</p></div>
+      <div class="steps-grid">
+        <div class="step"><div class="step-num">1</div><h3>Pick a Mode</h3><p>Select the learning context that matches your current goal.</p></div>
+        <div class="step"><div class="step-num">2</div><h3>Share Context</h3><p>Paste your code, ask a concept, or share an error message.</p></div>
+        <div class="step"><div class="step-num">3</div><h3>Master It</h3><p>Get guided explanations, not just copy-paste answers.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="pricing">
+    <div class="section-inner">
+      <div class="section-header"><h2>Simple, transparent pricing</h2><p>Invest in your skills.</p></div>
+      <div class="pricing-grid">
+
+        <div class="pricing-card">
+          <h3>ByteMentor Free</h3>
+          <div class="price">Free <span>forever</span></div>
+          <ul class="features-list">
+            <li><span class="check check-blue">✓</span> 10 messages per day</li>
+            <li><span class="check check-blue">✓</span> Basic code checking</li>
+            <li><span class="check check-blue">✓</span> Beginner mode only</li>
+            <li><span class="check check-blue">✓</span> Community support</li>
+          </ul>
+          <a href="chat.html" class="pricing-btn">Get Started Free</a>
+        </div>
+
+        <div class="pricing-card popular">
+          <div class="popular-badge">Most Popular</div>
+          <h3 class="pro">ByteMentor Pro</h3>
+          <div class="price">£5.99 <span>/year</span></div>
+          <ul class="features-list">
+            <li><span class="check check-blue">✓</span> Unlimited messages</li>
+            <li><span class="check check-blue">✓</span> All 4 learning modes</li>
+            <li><span class="check check-blue">✓</span> Code error highlighting</li>
+            <li><span class="check check-blue">✓</span> Learning roadmaps</li>
+            <li><span class="check check-blue">✓</span> Progress tracking</li>
+            <li><span class="check check-blue">✓</span> Priority support</li>
+          </ul>
+          <a href="chat.html" class="pricing-btn solid">Start Pro Trial</a>
+        </div>
+
+        <div class="pricing-card">
+          <h3>ByteMentor Premium</h3>
+          <div class="price">£12.99 <span>/year</span></div>
+          <ul class="features-list">
+            <li><span class="check check-cyan">✓</span> Everything in Pro</li>
+            <li><span class="check check-cyan">✓</span> GPT-4o powered responses</li>
+            <li><span class="check check-cyan">✓</span> "Explain like I'm..." slider</li>
+            <li><span class="check check-cyan">✓</span> Mini coding challenges</li>
+            <li><span class="check check-cyan">✓</span> Streak counter &amp; progress</li>
+            <li><span class="check check-cyan">✓</span> 1-on-1 session booking (soon)</li>
+            <li><span class="check check-cyan">✓</span> Dedicated support</li>
+          </ul>
+          <a href="chat.html" class="pricing-btn">Go Premium</a>
+        </div>
+
+      </div>
+      <div class="cta-bottom">
+        <a href="chat.html" class="btn-cta">✉ Chat to ByteMentor</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="logo"><span class="brace">{</span><span>🧠</span><span class="brace">}</span><span class="wordmark">ByteMentor</span></div>
+        <div class="footer-tagline">Your personal AI coding tutor.</div>
+      </div>
+      <div class="footer-links">
+        <a href="#">Terms</a><a href="#">Privacy</a><a href="#">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
